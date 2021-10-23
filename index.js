@@ -147,7 +147,6 @@ app.post('/message',async (req, res) => {
         kinesisMessage.timestamp+= 100;
         kinesisMessage.transactionId=faker.finance.bitcoinAddress();
         kinesisMessage.transactionAmount=parseInt(faker.finance.amount()*100);
-        console.log(kinesisMessage);
         await sendToKinesis(kinesisMessage,partitionKey);
     }
 
