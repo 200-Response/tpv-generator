@@ -103,7 +103,9 @@ const tpvStatus =[
     }
 ]
     
-    
+app.get('/status',(req,res) =>{
+    res.json('STATUS OK');
+});
 
 
 app.post('/message',async (req, res) => {
