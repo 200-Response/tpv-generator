@@ -132,13 +132,16 @@ app.post('/message',async (req, res) => {
             await sleep(500);
             console.log('------ bach of ten');
         }
+        kinesisMessage={};
         kinesisMessage.timestamp = Date.now();
         kinesisMessage.statusCode = `${getRandomEvent()}`;
         kinesisMessage.ipAddress = faker.internet.ip();
         kinesisMessage.serialNumberTpv = getRandomTPV();
         kinesisMessage.bin = faker.finance.creditCardNumber();
         kinesisMessage.timestamp+= 100;
-        await sendToKinesis(kinesisMessage,partitionKey);
+        kinesisMessage.transactionId=faker.finance.bitcoinAddress();
+        kinesisMessage.transactionAmount=parseInt(faker.finance.amount()*100);
+        //await sendToKinesis(kinesisMessage,partitionKey);
     }
 
     res.json('finished');

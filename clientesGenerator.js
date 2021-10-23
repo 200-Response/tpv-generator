@@ -192,6 +192,7 @@ app.post('/clientsData',async (req, res) => {
     }
     
     for(let i=0;i<=total;i++){
+        client = {};
         client.bin = faker.finance.creditCardNumber();
         client.cliente_firstName = faker.name.firstName();
         client.cliente_lastName = faker.name.lastName();
