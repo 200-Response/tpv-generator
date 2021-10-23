@@ -19,6 +19,7 @@ app.use(cors());
 
 let totalTpv = 0;
 let totalMessages= 0;
+let arrayStatusCode = [];
 
 const tpvStatus =[
     {        
@@ -109,6 +110,10 @@ app.get('/status',(req,res) =>{
 
 
 app.post('/message',async (req, res) => {
+    arrayStatusCode = req.body.statusCode;  // [ "22","15","16" ]
+    if(arrayStatusCode.length<1){
+        return res.json({error:'No seleccionaste status code'});
+    }
     totalTpv = req.body.totalTpv;
     totalMessages = req.body.totalMessages;
     console.log('totalTpv',totalTpv);
@@ -134,13 +139,14 @@ app.post('/message',async (req, res) => {
         }
         kinesisMessage={};
         kinesisMessage.timestamp = Date.now();
-        kinesisMessage.statusCode = `${getRandomEvent()}`;
+        kinesisMessage.statusCode = `${getRandomEvent(arrayStatusCode)}`;
         kinesisMessage.ipAddress = faker.internet.ip();
         kinesisMessage.serialNumberTpv = getRandomTPV();
         kinesisMessage.bin = faker.finance.creditCardNumber();
         kinesisMessage.timestamp+= 100;
         kinesisMessage.transactionId=faker.finance.bitcoinAddress();
         kinesisMessage.transactionAmount=parseInt(faker.finance.amount()*100);
+        console.log(kinesisMessage);
         //await sendToKinesis(kinesisMessage,partitionKey);
     }
 
@@ -179,8 +185,8 @@ const getRandomTPV = ( ) =>{
 };
 
 const getRandomEvent = ( allowedStatus  = [] ) =>{
-    //toDo filter allowed Status
-    return tpvStatus[Math.floor(Math.random() * tpvStatus.length)].statusCode;
+let tpvStatusFiltered= tpvStatus.filter( item => allowedStatus.indexOf(item.statusCode) !== -1  )
+   return tpvStatusFiltered[Math.floor(Math.random() * tpvStatusFiltered.length)].statusCode;
 };
 
 app.listen(port, () => {
