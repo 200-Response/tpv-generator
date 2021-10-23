@@ -130,9 +130,10 @@ app.post('/message',async (req, res) => {
         timestamp:123412341320491341324
     }
     
+    let partitionKey = md5(Date.now());
+
     for(let i=0;i<totalMessages;i++){
         console.log('mensaje ',i);
-        let partitionKey = md5(Date.now());
         if(i%100==0){
             await sleep(500);
             console.log('------ bach of ten');
@@ -142,12 +143,12 @@ app.post('/message',async (req, res) => {
         kinesisMessage.statusCode = `${getRandomEvent(arrayStatusCode)}`;
         kinesisMessage.ipAddress = faker.internet.ip();
         kinesisMessage.serialNumberTpv = getRandomTPV();
-        kinesisMessage.bin = faker.finance.creditCardNumber();
+        kinesisMessage.bin = `4000-0012-3456-${getLastFour()}`;
         kinesisMessage.timestamp+= 100;
         kinesisMessage.transactionId=faker.finance.bitcoinAddress();
         kinesisMessage.transactionAmount=parseInt(faker.finance.amount()*100);
         console.log(kinesisMessage);
-        //await sendToKinesis(kinesisMessage,partitionKey);
+        await sendToKinesis(kinesisMessage,partitionKey);
     }
 
     res.json('finished');
@@ -172,6 +173,12 @@ const sendToKinesis = (kinesisMessage,partitionKey) =>{
             }   
           });
     })
+}
+
+const getLastFour = () => {
+	let a = Math.floor(100000 + Math.random() * 900000);
+ 	a = a.toString().substring(0, 4);
+	return a;
 }
 
 const sleep = (ms) => {

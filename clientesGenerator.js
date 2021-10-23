@@ -184,6 +184,12 @@ const getEstado = () =>{
     return estados[Math.floor(Math.random() * estados.length)].name;
 };
 
+const getLastFour = (i) => {
+	let a = 100000+i+1;
+ 	a = a.toString().substr(-5);
+	return a;
+}
+
 app.post('/clientsData',async (req, res) => {
     let total = req.body.total;
     let clientsArray = [];
@@ -193,7 +199,7 @@ app.post('/clientsData',async (req, res) => {
     
     for(let i=0;i<=total;i++){
         client = {};
-        client.bin = faker.finance.creditCardNumber();
+        client.bin = `4000-0012-3456-${getLastFour(i)}`;
         client.cliente_firstName = faker.name.firstName();
         client.cliente_lastName = faker.name.lastName();
         client.cliente_gender = faker.name.gender();
